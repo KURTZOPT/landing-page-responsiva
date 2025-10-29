@@ -1,0 +1,300 @@
+<!doctype html>
+
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kurtz Optimizer — Aumente seu FPS</title>
+  <meta name="description" content="Comunidade de otimização no Discord. Guides e ferramentas para reduzir input lag, aumentar FPS e estabilizar seu PC." />
+  <meta name="theme-color" content="#001133" />
+  <meta property="og:title" content="Kurtz Optimizer — Aumente seu FPS" />
+  <meta property="og:description" content="Comunidade de otimização no Discord: menos lag, mais FPS, zero enrolação." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Design tokens ===== */
+    :root{
+      --bg: #070b14;
+      --bg-2:#0a1224;
+      --card:#0e1630;
+      --text:#e6f0ff;
+      --muted:#a9b3c7;
+      --accent:#00ccff;
+      --accent-2:#0066ff;
+      --ring:#2ad3ff;
+      --ok:#35d399; 
+      --warn:#ffd166;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --container: 1120px;
+    }*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Helvetica Neue", sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #001133 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(1000px 500px at 90% -10%, #001f4d 0%, rgba(0,0,0,0) 60%),
+    linear-gradient(#000, #000 40%, var(--bg));
+}
+
+.container{max-width:var(--container);margin:0 auto;padding:0 24px}
+
+/* ===== Topbar ===== */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(10px);background:rgba(5,10,20,.6);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;gap:12px;align-items:center;text-decoration:none;color:var(--text)}
+.badge{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;box-shadow:var(--shadow)}
+.badge svg{width:18px;height:18px}
+.nav-links{display:flex;gap:20px;align-items:center}
+.nav-links a{color:var(--text);text-decoration:none;font-weight:500;opacity:.85}
+.nav-links a:hover{opacity:1}
+.discord-btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001018;font-weight:700;text-decoration:none;box-shadow:0 0 0 2px rgba(0,0,0,.2) inset, var(--shadow)}
+.discord-btn svg{width:18px;height:18px}
+
+/* Mobile menu */
+.hamb{display:none;width:40px;height:40px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:transparent;color:var(--text)}
+@media (max-width: 820px){
+  .nav-links{display:none}
+  .hamb{display:inline-grid;place-items:center}
+  .nav.open .nav-links{display:flex;position:absolute;top:64px;left:0;right:0;flex-direction:column;gap:0;background:rgba(6,12,24,.95);border-bottom:1px solid rgba(255,255,255,.06)}
+  .nav.open .nav-links a, .nav.open .discord-btn{padding:16px 24px;width:100%;border-radius:0}
+  .nav.open .discord-btn{justify-content:center}
+}
+
+/* ===== Hero ===== */
+.hero{padding:80px 0 48px;border-bottom:1px solid rgba(255,255,255,.06);background:linear-gradient(180deg, rgba(0,20,50,.35), rgba(0,0,0,0))}
+.hero h1{font-size:clamp(32px, 6vw, 56px);line-height:1.05;margin:0 0 12px;text-shadow:0 0 24px rgba(0,153,204,.35)}
+.hero p{max-width:820px;margin:0 auto 28px;font-size:clamp(16px,2.5vw,18px);color:var(--muted)}
+.cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:14px;font-weight:700;text-decoration:none}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001018;box-shadow:var(--shadow)}
+.btn.ghost{border:1px solid rgba(255,255,255,.14);color:var(--text)}
+
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.metric{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px;text-align:center}
+.metric b{font-size:22px}
+@media (max-width:720px){.metrics{grid-template-columns:1fr}}
+
+/* ===== Sections ===== */
+section{padding:72px 0}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}
+h2{margin:0;font-size:clamp(24px,4.2vw,34px);color:var(--accent)}
+.section-sub{color:var(--muted)}
+
+/* Features */
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h3{margin:10px 0 6px;font-size:18px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;box-shadow:0 0 0 1px rgba(0,0,0,.2) inset}
+.icon svg{width:16px;height:16px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))}
+@media (max-width:1024px){.features{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.features{grid-template-columns:1fr}}
+
+/* Team */
+.team{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.person{display:flex;gap:14px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:14px;align-items:flex-start}
+.person img{width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.12);box-shadow:var(--shadow)}
+.person h3{margin:4px 0 6px;font-size:18px}
+.role{display:inline-block;padding:4px 8px;border-radius:20px;background:rgba(0,204,255,.12);border:1px solid rgba(0,204,255,.32);font-size:12px;color:#bfefff;margin-bottom:6px}
+.person p{margin:0;color:var(--muted);font-size:14px}
+@media (max-width:980px){.team{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.team{grid-template-columns:1fr}}
+
+/* Footer */
+footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);color:var(--muted)}
+footer .foot{display:flex;align-items:center;justify-content:space-between;gap:14px}
+footer a{color:var(--text);text-decoration:none}
+@media (max-width:720px){footer .foot{flex-direction:column;align-items:flex-start}}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .btn, .discord-btn{transition:none}
+}
+
+  </style>
+</head>
+<body>
+  <!-- Topbar -->
+  <div class="topbar" role="navigation" aria-label="principal">
+    <div class="container nav" id="nav">
+      <a class="brand" href="#inicio" aria-label="Kurtz Optimizer">
+        <span class="badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" fill="#001018"/></svg>
+        </span>
+        <strong>Kurtz Optimizer</strong>
+      </a>
+      <button class="hamb" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false" onclick="toggleMenu()">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg>
+      </button>
+      <div class="nav-links" id="menu">
+        <a href="#sobre">Sobre</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#equipe">Equipe</a>
+        <a class="discord-btn" href="https://discord.gg/eh7qzSdqCp" target="_blank" rel="noopener" aria-label="Entrar no Discord">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.369A19.791 19.791 0 0 0 15.893 3c-.208.375-.45.88-.617 1.275a18.27 18.27 0 0 0-5.552 0A8.258 8.258 0 0 0 9.107 3 19.736 19.736 0 0 0 3.68 4.371C1.335 7.94.922 11.394 1.106 14.806c2.137 1.642 4.204 2.64 6.26 3.3.504-.694.955-1.43 1.35-2.201-.744-.282-1.46-.62-2.146-1.011.18-.131.357-.268.53-.41 4.134 1.945 8.614 1.945 12.69 0 .175.142.353.279.53.41-.687.392-1.403.73-2.148 1.012.395.771.847 1.507 1.352 2.201 2.056-.66 4.123-1.658 6.26-3.3.256-4.74-.874-8.157-2.967-10.437Z" fill="#001018"/></svg>
+          Comunidade
+        </a>
+      </div>
+    </div>
+  </div>  <!-- Hero -->  <header id="inicio" class="hero">
+    <div class="container" style="text-align:center">
+      <h1>Aumente seu FPS. Reduza o input lag.</h1>
+      <p>Comunidade informal de otimização no Discord. Sem modinha, sem placebo. Guias claros e ferramentas sérias para extrair desempenho real do seu PC.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://discord.gg/eh7qzSdqCp" target="_blank" rel="noopener" aria-label="Entrar na comunidade no Discord">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#001018" aria-hidden="true"><path d="M20.317 4.369A19.791 19.791 0 0 0 15.893 3c-.208.375-.45.88-.617 1.275a18.27 18.27 0 0 0-5.552 0A8.258 8.258 0 0 0 9.107 3 19.736 19.736 0 0 0 3.68 4.371C1.335 7.94.922 11.394 1.106 14.806c2.137 1.642 4.204 2.64 6.26 3.3.504-.694.955-1.43 1.35-2.201-.744-.282-1.46-.62-2.146-1.011.18-.131.357-.268.53-.41 4.134 1.945 8.614 1.945 12.69 0 .175.142.353.279.53.41-.687.392-1.403.73-2.148 1.012.395.771.847 1.507 1.352 2.201 2.056-.66 4.123-1.658 6.26-3.3.256-4.74-.874-8.157-2.967-10.437Z"/></svg>
+          Entrar no Discord
+        </a>
+        <a class="btn ghost" href="#sobre">Ver como funciona</a>
+      </div>
+      <div class="metrics">
+        <div class="metric"><b>+FPS</b><div style="color:var(--muted)">Foco em performance real</div></div>
+        <div class="metric"><b>−lag</b><div style="color:var(--muted)">Input mais responsivo</div></div>
+        <div class="metric"><b>✔ estável</b><div style="color:var(--muted)">Nada de gambiarras</div></div>
+      </div>
+    </div>
+  </header>  <!-- Sobre -->  <section id="sobre">
+    <div class="container">
+      <div class="section-head">
+        <h2>Sobre a otimização</h2>
+        <div class="section-sub">Clareza, controle e resultado.</div>
+      </div>
+      <div class="features" id="recursos">
+        <article class="card">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#001018"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          </div>
+          <h3>Mais FPS</h3>
+          <p>Perfil de energia, timers e agendadores ajustados. Zero processos inúteis em jogo.</p>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#001018"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5v4l3 3-1.5 1.5L11 12V7h2z"/></svg>
+          </div>
+          <h3>Menos input lag</h3>
+          <p>Filas e prioridade de threads otimizadas. Latência baixa como padrão.</p>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#001018"><path d="M4 4h16v2H4V4zm2 4h12v2H6V8zm-2 4h16v2H4v-2zm2 4h12v2H6v-2z"/></svg>
+          </div>
+          <h3>Serviços sob controle</h3>
+          <p>Desliga o que atrapalha. Mantém o que é crítico. Sem quebrar o sistema.</p>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#001018"><path d="M4 6h16v12H4z"/><path d="M8 10h8v4H8z" fill="#0af"/></svg>
+          </div>
+          <h3>CPU e GPU alinhadas</h3>
+          <p>Afinidade, prioridade e clocks pensados para estabilidade e consistência.</p>
+        </article>
+      </div>
+    </div>
+  </section>  <!-- Equipe -->  <section id="equipe">
+    <div class="container">
+      <div class="section-head">
+        <h2>Equipe Kurtz Optimizer</h2>
+        <div class="section-sub">Gente que entrega. Sem firula.</div>
+      </div>
+      <div class="team">
+        <article class="person">
+          <img loading="lazy" src="https://i.postimg.cc/94p7vbb5/image.png" alt="Foto de Kurtz" />
+          <div>
+            <span class="role">Dono</span>
+            <h3>Kurtz Optimizer</h3>
+            <p>Dev de ferramentas de sistema. Obcecado por FPS e estabilidade. Ajuda a tirar o máximo de PCs reais.</p>
+          </div>
+        </article>
+        <article class="person">
+          <img loading="lazy" src="https://i.postimg.cc/CdtqTzG1/image.png" alt="Foto de Nando" />
+          <div>
+            <span class="role">Administrador</span>
+            <h3>Nando</h3>
+            <p>Mantém o servidor rápido e em paz. Resolve antes de virar problema.</p>
+          </div>
+        </article>
+        <article class="person">
+          <img loading="lazy" src="https://i.postimg.cc/nMYq7HBL/image.png" alt="Foto de Dark" />
+          <div>
+            <span class="role">Administrador</span>
+            <h3>Dark</h3>
+            <p>Wallpapers e jogos de qualidade, sem vírus. Curadoria direta ao ponto.</p>
+          </div>
+        </article>
+        <article class="person">
+          <img loading="lazy" src="https://i.postimg.cc/kDV2cq06/image.png" alt="Foto de Moulin" />
+          <div>
+            <span class="role">Administrador</span>
+            <h3>Moulin</h3>
+            <p>Suporte geral e respostas rápidas. Dúvida entra, solução sai.</p>
+          </div>
+        </article>
+        <article class="person">
+          <img loading="lazy" src="https://i.postimg.cc/ZBW5VxMh/image.png" alt="Foto de Kyoshi" />
+          <div>
+            <span class="role">Administrador</span>
+            <h3>Kyoshi</h3>
+            <p>Performance com estilo. Transforma HTML e JS em produto. Resultado acima de discurso.</p>
+          </div>
+        </article>
+        <article class="person">
+          <img loading="lazy" src="https://i.postimg.cc/Z9Rb5LZ5/image.png" alt="Foto de Youz" />
+          <div>
+            <span class="role">Adm • Otimizador</span>
+            <h3>Youz</h3>
+            <p>Busca configurações de pico para cada máquina. Estabilidade em primeiro lugar.</p>
+          </div>
+        </article>
+        <article class="person">
+          <img loading="lazy" src="https://i.postimg.cc/K1cF05K2/image.png" alt="Foto de TH" />
+          <div>
+            <span class="role">Administrador</span>
+            <h3>TH</h3>
+            <p>Ajusta cada canto do servidor. E diverte o povo no processo.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>  <!-- CTA final -->  <section>
+    <div class="container" style="text-align:center">
+      <h2>Chega de placebo. Entre e otimize direito.</h2>
+      <p class="section-sub">Tudo começa na comunidade. Você entra, aprende, aplica e volta para compartilhar.</p>
+      <p><a class="btn primary" href="https://discord.gg/eh7qzSdqCp" target="_blank" rel="noopener">Entrar no Discord</a></p>
+    </div>
+  </section>  <footer>
+    <div class="container foot">
+      <div style="display:flex;gap:10px;align-items:center">
+        <span class="badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" fill="#001018"/></svg>
+        </span>
+        <div>
+          <strong>Kurtz Optimizer</strong><br/>
+          <small class="section-sub">© <span id="year"></span> • Desempenho acima de conversa</small>
+        </div>
+      </div>
+      <div>
+        <a href="#sobre">Sobre</a> · <a href="#equipe">Equipe</a> · <a href="https://discord.gg/eh7qzSdqCp" target="_blank" rel="noopener">Discord</a><br/>
+        <small class="section-sub">maded by <a href="https://amathyzin.xyz" target="_blank" rel="noopener">aMathyzin</a></small>
+      </div>
+    </div>
+  </footer>  <script>
+    // Ano no footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Toggle menu mobile
+    function toggleMenu(){
+      const nav = document.getElementById('nav');
+      const btn = event.currentTarget;
+      nav.classList.toggle('open');
+      const expanded = nav.classList.contains('open');
+      btn.setAttribute('aria-expanded', String(expanded));
+    }
+  </script><noscript>Ative o JavaScript para usar o menu em telas pequenas.</noscript>
+
+</body>
+</html>
